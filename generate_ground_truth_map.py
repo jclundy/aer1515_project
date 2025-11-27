@@ -2,10 +2,6 @@ import os
 import sys
 import time 
 import copy 
-from io import StringIO
-
-# import pypcd # for the install, use this command: python3.x (use your python ver) -m pip install --user git+https://github.com/DanielPollithy/pypcd.git
-# from pypcd import pypcd
 
 import numpy as np
 from numpy import linalg as LA
@@ -17,13 +13,6 @@ def read_bin(bin_path):
     scan = scan.reshape((-1, 4))
 
     return scan
-
-
-# jet_table = np.load('jet_table.npy')
-# bone_table = np.load('bone_table.npy')
-
-# color_table = bone_table
-# color_table_len = color_table.shape[0]
 
 
 ##########################
@@ -131,25 +120,6 @@ for node_idx in range(len(scan_files)):
 
     scan_xyz_local = copy.deepcopy(np.asarray(scan_pcd.points))
 
-    
-    
-    # scan_pypcd_with_intensity = None
-
-    # filename, file_extension = os.path.splitext(scan_path)
-    # if(file_extension == ".bin"):
-    #     pointcloud = read_bin(scan_path)
-    #     # read pcd
-    #     # scan_pypcd_with_intensity = pypcd.PointCloud.from_array(pointcloud)
-    #     # scan_pypcd_with_intensity = pypcd.PointCloud.from_array(pointcloud)
-
-    #     scan_pypcd_with_intensity = pypcd.make_xyz_rgb_point_cloud(pointcloud)
-    
-    #     # pcd = o3d.geometry.PointCloud()
-    #     # pcd.points = o3d.utility.Vector3dVector(pointcloud[:, :3])
-    # else:
-    #     scan_pypcd_with_intensity = pypcd.PointCloud.from_path(scan_path)
-    
-
  
     scan_intensity = np.ones((len(scan_pcd.points)))
     # scan_intensity_colors_idx = np.round( (color_table_len-1) * np.minimum( 1, np.maximum(0, scan_intensity / intensity_color_max) ) )
@@ -175,14 +145,6 @@ for node_idx in range(len(scan_files)):
         reduced_scan = scan_pcd_global.voxel_down_sample(voxel_size=0.1)
         pcd_combined_for_vis += reduced_scan # open3d pointcloud class append is fast 
 
-    if is_live_vis:
-        if(node_idx is scan_idx_range_to_stack[0]): # to ensure the vis init 
-            vis.add_geometry(pcd_combined_for_vis) 
-
-        # vis.update_geometry(pcd_combined_for_vis)
-        # vis.poll_events()
-        # vis.update_renderer()
-
     # save 
     np_xyz_all[curr_count:curr_count + scan_xyz.shape[0], :] = scan_xyz
     np_intensity_all[curr_count:curr_count + scan_xyz.shape[0], :] = scan_intensity
@@ -190,36 +152,19 @@ for node_idx in range(len(scan_files)):
     curr_count = curr_count + scan_xyz.shape[0]
     print(curr_count)
  
-#
-# if(is_o3d_vis):
-# print('voxelization')
-# voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(pcd_combined_for_vis,
-#                                                             voxel_size=0.05)
+
 print("Final downsampling")
 pcd_combined_for_vis = pcd_combined_for_vis.voxel_down_sample(voxel_size=0.1)
 
 vis.add_geometry(pcd_combined_for_vis)
-# print("draw the merged map.")
-# vis.add_geometry(pcd_combined_for_vis)
+
 vis.run()
 vis.destroy_window()
-
-# # save ply having intensity
-# np_xyz_all = np_xyz_all[0:curr_count, :]
-# np_intensity_all = np_intensity_all[0:curr_count, :]
-
-# np_xyzi_all = np.hstack( (np_xyz_all, np_intensity_all) )
-# xyzi = make_xyzi_point_cloud(np_xyzi_all)
-
-# map_name = data_dir + "map_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + "_with_intensity.pcd"
-# xyzi.save_pcd(map_name, compression='binary_compressed')
-# print("intensity map is save (path:", map_name, ")")
 
 # save rgb colored points 
 # map_name = data_dir + "map_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + ".pcd"
 # o3d.io.write_point_cloud(map_name, pcd_combined_for_vis)
 # print("the map is save (path:", map_name, ")")
-
 
 '''
 clouds_list = [np.load(cloud_file).reshape(-1, args.point_dims) for cloud_file in args.clouds_file_list]
