@@ -8,6 +8,13 @@ from numpy import linalg as LA
 
 import open3d as o3d
 
+import yaml
+
+import sys
+sys.path.insert(0, "../semantic-kitti-api")  # add Folder_2 path to search list
+
+from auxiliary.laserscan import LaserScan, SemLaserScan
+
 def read_bin(bin_path):
     scan = np.fromfile(bin_path, dtype=np.float32)
     scan = scan.reshape((-1, 4))
@@ -49,6 +56,24 @@ pose_dir = "/home/joseph/catkin/scaloam_ws/src/SC-A-LOAM/utils/python/results/la
 # pose_file = "poses.txt"
 # pose_file = "03_gt_tum.txt"
 
+# Label file
+# /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/data_odometry_labels/dataset/sequences/00/labels/000000.label
+
+default_config="../semantic-kitti-api/config/semantic-kitti.yaml"
+
+# open config file
+try:
+    print("Opening config file %s" % default_config)
+    CFG = yaml.safe_load(open(default_config, 'r'))
+except Exception as e:
+    print(e)
+    print("Error opening yaml file.")
+    quit()
+
+color_dict = CFG["color_map"]
+
+
+#######################################################################
 pose_file = "00_poses_kitti.txt"
 
 poses = []
@@ -81,16 +106,6 @@ vis.get_render_option().background_color = np.zeros(3)
 
 nodes_count = 0
 pcd_combined_for_vis = o3d.geometry.PointCloud()
-pcd_combined_for_save = None
-
-# The scans from 000000.pcd should be prepared if it is not used (because below code indexing is designed in a naive way)
-
-# manually reserve memory for fast write  
-num_all_points_expected = int(num_points_in_a_scan * np.round((scan_idx_range_to_stack[1] - scan_idx_range_to_stack[0])/node_skip))
-
-np_xyz_all = np.empty([num_all_points_expected, 3])
-np_intensity_all = np.empty([num_all_points_expected, 1])
-curr_count = 0
 
 for node_idx in range(len(scan_files)):
     if(node_idx < scan_idx_range_to_stack[0] or node_idx >= scan_idx_range_to_stack[1]):
@@ -107,50 +122,43 @@ for node_idx in range(len(scan_files)):
 
     scan_path = os.path.join(scan_dir, scan_files[node_idx])
 
-    # scan_pcd = o3d.io.read_point_cloud(scan_path)
+
+    ''' PART 1
+    Open Point cloud and Labels into SemanticLaserScan object
+    '''
+    scan = SemLaserScan(color_dict, project=True)
+    scan.open_scan(scan_path)
+
+    label_path = data_dir + 'labels/' + '000000.label'
+    scan.open_label(label_path)
+
+    mask = (scan.sem_label == 252)
+
+    selected_points = scan.points
+
     scan_pcd = o3d.geometry.PointCloud()
-
-
-    filename, file_extension = os.path.splitext(scan_path)
-    if(file_extension == ".bin"):
-        pointcloud_data = read_bin(scan_path)
-        scan_pcd.points = o3d.utility.Vector3dVector(pointcloud_data[:, :3])
-    else:
-        scan_pcd = o3d.io.read_point_cloud(scan_path)
-
-    scan_xyz_local = copy.deepcopy(np.asarray(scan_pcd.points))
-
- 
-    scan_intensity = np.ones((len(scan_pcd.points)))
-    # scan_intensity_colors_idx = np.round( (color_table_len-1) * np.minimum( 1, np.maximum(0, scan_intensity / intensity_color_max) ) )
-    # scan_intensity_colors = color_table[scan_intensity_colors_idx.astype(int)]
+    scan_pcd.points = o3d.utility.Vector3dVector(selected_points)
 
     scan_pcd_global = scan_pcd.transform(ExtrinsicLiDARtoPoseBase)
     scan_pcd_global = scan_pcd.transform(scan_pose) # global coord, note that this is not deepcopy
-    # scan_pcd_global.colors = o3d.utility.Vector3dVector(scan_intensity_colors)
-    scan_pcd_global.colors = o3d.utility.Vector3dVector(np.ones((len(scan_pcd.points), 3)))
-    scan_xyz = np.asarray(scan_pcd_global.points)
 
-    scan_intensity = np.expand_dims(scan_intensity, axis=1) 
-    scan_ranges = LA.norm(scan_xyz_local, axis=1)
+    ''' PART 2
+    Filter out points too close to the sensor
+    '''
+    # scan_ranges = LA.norm(scan_xyz_local, axis=1)
 
-    if(is_near_removal):
-        eff_idxes = np.where (scan_ranges > thres_near_removal)
-        scan_xyz = scan_xyz[eff_idxes[0], :]
-        scan_intensity = scan_intensity[eff_idxes[0], :]
+    # if(is_near_removal):
+    #     eff_idxes = np.where (scan_ranges > thres_near_removal)
+    #     scan_xyz = scan_xyz[eff_idxes[0], :]
+    #     scan_intensity = scan_intensity[eff_idxes[0], :]
 
-        scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
+    #     scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
 
-    if(is_o3d_vis):
-        reduced_scan = scan_pcd_global.voxel_down_sample(voxel_size=0.1)
-        pcd_combined_for_vis += reduced_scan # open3d pointcloud class append is fast 
-
-    # save 
-    np_xyz_all[curr_count:curr_count + scan_xyz.shape[0], :] = scan_xyz
-    np_intensity_all[curr_count:curr_count + scan_xyz.shape[0], :] = scan_intensity
-
-    curr_count = curr_count + scan_xyz.shape[0]
-    print(curr_count)
+    ''' PART 3
+    Voxel-based downsampling
+    '''
+    reduced_scan = scan_pcd_global.voxel_down_sample(voxel_size=0.1)
+    pcd_combined_for_vis += reduced_scan # open3d pointcloud class append is fast
  
 
 print("Final downsampling")
@@ -165,17 +173,3 @@ vis.destroy_window()
 # map_name = data_dir + "map_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + ".pcd"
 # o3d.io.write_point_cloud(map_name, pcd_combined_for_vis)
 # print("the map is save (path:", map_name, ")")
-
-'''
-clouds_list = [np.load(cloud_file).reshape(-1, args.point_dims) for cloud_file in args.clouds_file_list]
-
-
-input_pkl_path = os.path.join(DATASET_DIREC_PATH, args.bbox_file_name + ".pkl") # write input pkl path
-start_idx = 0
-
-ground_heights_path = os.path.join(DATASET_DIREC_PATH, "ground_heights.txt")
-
-with open(input_pkl_path,"rb") as fr:
-    results = pickle.load(fr) # load pickle file
-
-'''
