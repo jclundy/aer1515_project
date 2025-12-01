@@ -36,7 +36,7 @@ is_o3d_vis = True
 intensity_color_max = 200
 
 is_near_removal = True
-thres_near_removal = 2 # meter (to remove platform-myself structure ghost points)
+thres_near_removal = 3 # meter (to remove platform-myself structure ghost points)
 
 ##########################
 
@@ -74,9 +74,9 @@ except Exception as e:
 
 color_dict = CFG["color_map"]
 #######################################################################
-filter_options = ["moving", "vehicles", "ground", "sidewalk"]
-# filter_options = ["moving", "vehicles"]
-# filter_option = "moving"
+# filter_options = ["moving", "vehicles", "ground", "sidewalk"]
+filter_options = ["moving", "vehicles"]
+# filter_options = ["moving"]
 
 #######################################################################
 
@@ -180,8 +180,12 @@ for node_idx in range(len(scan_files)):
   258: "moving-truck"
   259: "moving-other-vehicle"
     """
+    ''' PART 2a
+    Filter points too close
+    '''
+    # scan_ranges = LA.norm(np.asarray(scan_pcd.points), axis=1)
 
-    ''' PART 2
+    ''' PART 2b
     Filter based on point label
     '''
     mask = scan.sem_label != 1
@@ -202,8 +206,18 @@ for node_idx in range(len(scan_files)):
     scan_pcd.points = o3d.utility.Vector3dVector(scan.points[mask])
     scan_pcd.colors = o3d.utility.Vector3dVector(scan.sem_label_color[mask])
 
+    scan_xyz_local = copy.deepcopy(np.asarray(scan_pcd.points))
+
     scan_pcd_global = scan_pcd.transform(ExtrinsicLiDARtoPoseBase)
     scan_pcd_global = scan_pcd.transform(scan_pose) # global coord, note that this is not deepcopy
+
+    scan_ranges = LA.norm(scan_xyz_local, axis=1)
+    eff_idxes = np.where (scan_ranges > thres_near_removal)
+    scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
+
+    points_removed = len(scan_ranges) - len(eff_idxes[0])
+    print("number of points removed by range check:", points_removed)
+
 
     ''' PART 3
     Voxel-based downsampling
@@ -222,7 +236,7 @@ vis.destroy_window()
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 map_dir = os.path.join(cur_dir, "maps")
-map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + ".pcd"
+map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + "_" + "_".join(filter_options) + ".pcd"
 map_path = os.path.join(map_dir, map_name)
-o3d.io.write_point_cloud(map_name, pcd_combined_for_vis)
-print("the map is save to:", map_name, ")")
+o3d.io.write_point_cloud(map_path, pcd_combined_for_vis)
+print("the map is save to:", map_path, ")")
