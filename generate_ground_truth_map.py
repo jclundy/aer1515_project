@@ -43,20 +43,22 @@ thres_near_removal = 2 # meter (to remove platform-myself structure ghost points
 
 #
 # scan_dir = data_dir + "Scans"
-# scan_dir = data_dir + "velodyne"
-scan_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset_projected_0/sequences/00/ground_segmentation/non_ground"
+scan_dir = data_dir + "velodyne"
+# scan_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset_projected_0/sequences/00/ground_segmentation/non_ground"
+
 scan_files = os.listdir(scan_dir) 
 scan_files.sort()
 
 # scan_idx_range_to_stack = [0, len(scan_files)] # if you want a whole map, use [0, len(scan_files)]
 scan_idx_range_to_stack = [100, 150] # if you want a whole map, use [0, len(scan_files)]
 
-# pose_file = "optimized_poses.txt"
-pose_dir = "/home/joseph/catkin/scaloam_ws/src/SC-A-LOAM/utils/python/results/latest/"
-# pose_file = "poses.txt"
-# pose_file = "03_gt_tum.txt"
+pose_file = "00_poses_kitti.txt"
+# pose_dir = "/home/joseph/catkin/scaloam_ws/src/SC-A-LOAM/utils/python/results/latest/"
+pose_dir = data_dir
+pose_file = "poses.txt"
 
 # Label file
+label_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/data_odometry_labels/dataset/sequences/00/labels"
 # /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/data_odometry_labels/dataset/sequences/00/labels/000000.label
 
 default_config="../semantic-kitti-api/config/semantic-kitti.yaml"
@@ -74,7 +76,6 @@ color_dict = CFG["color_map"]
 
 
 #######################################################################
-pose_file = "00_poses_kitti.txt"
 
 poses = []
 f = open(pose_dir+pose_file, 'r')
@@ -112,8 +113,8 @@ for node_idx in range(len(scan_files)):
         continue
 
     nodes_count = nodes_count + 1
-    if( nodes_count % node_skip is not 0): 
-        if(node_idx is not scan_idx_range_to_stack[0]): # to ensure the vis init 
+    if( nodes_count % node_skip != 0): 
+        if(node_idx != scan_idx_range_to_stack[0]): # to ensure the vis init 
             continue
 
     print("read keyframe scan idx", node_idx)
@@ -126,10 +127,14 @@ for node_idx in range(len(scan_files)):
     ''' PART 1
     Open Point cloud and Labels into SemanticLaserScan object
     '''
+    print("scan_path=",scan_path)
+
     scan = SemLaserScan(color_dict, project=True)
     scan.open_scan(scan_path)
 
-    label_path = data_dir + 'labels/' + '000000.label'
+    filename, file_extension = os.path.splitext(scan_files[node_idx])
+    label_path = os.path.join(label_dir, filename + '.label')
+    print("label_path=",label_path)
     scan.open_label(label_path)
 
     mask = (scan.sem_label == 252)
