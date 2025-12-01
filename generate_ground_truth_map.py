@@ -50,7 +50,7 @@ scan_files = os.listdir(scan_dir)
 scan_files.sort()
 
 # scan_idx_range_to_stack = [0, len(scan_files)] # if you want a whole map, use [0, len(scan_files)]
-scan_idx_range_to_stack = [100, 150] # if you want a whole map, use [0, len(scan_files)]
+scan_idx_range_to_stack = [100, 300] # if you want a whole map, use [0, len(scan_files)]
 
 pose_file = "00_poses_kitti.txt"
 # pose_dir = "/home/joseph/catkin/scaloam_ws/src/SC-A-LOAM/utils/python/results/latest/"
@@ -136,6 +136,7 @@ for node_idx in range(len(scan_files)):
     label_path = os.path.join(label_dir, filename + '.label')
     print("label_path=",label_path)
     scan.open_label(label_path)
+    scan.colorize()
 
     mask = (scan.sem_label == 252)
 
@@ -146,6 +147,8 @@ for node_idx in range(len(scan_files)):
 
     scan_pcd_global = scan_pcd.transform(ExtrinsicLiDARtoPoseBase)
     scan_pcd_global = scan_pcd.transform(scan_pose) # global coord, note that this is not deepcopy
+
+    scan_pcd.colors = o3d.utility.Vector3dVector(scan.sem_label_color)
 
     ''' PART 2
     Filter out points too close to the sensor
