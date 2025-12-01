@@ -52,7 +52,7 @@ scan_files.sort()
 # scan_idx_range_to_stack = [0, len(scan_files)] # if you want a whole map, use [0, len(scan_files)]
 scan_idx_range_to_stack = [100, 300] # if you want a whole map, use [0, len(scan_files)]
 
-pose_file = "00_poses_kitti.txt"
+# pose_file = "00_poses_kitti.txt"
 # pose_dir = "/home/joseph/catkin/scaloam_ws/src/SC-A-LOAM/utils/python/results/latest/"
 pose_dir = data_dir
 pose_file = "poses.txt"
@@ -220,7 +220,9 @@ vis.add_geometry(pcd_combined_for_vis)
 vis.run()
 vis.destroy_window()
 
-# save rgb colored points 
-# map_name = data_dir + "map_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + ".pcd"
-# o3d.io.write_point_cloud(map_name, pcd_combined_for_vis)
-# print("the map is save (path:", map_name, ")")
+cur_dir = os.path.dirname(os.path.abspath(__file__))
+map_dir = os.path.join(cur_dir, "maps")
+map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + ".pcd"
+map_path = os.path.join(map_dir, map_name)
+o3d.io.write_point_cloud(map_name, pcd_combined_for_vis)
+print("the map is save to:", map_name, ")")
