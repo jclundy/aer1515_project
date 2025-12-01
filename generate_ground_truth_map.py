@@ -109,7 +109,8 @@ vis.get_render_option().point_size = 1.0
 vis.get_render_option().background_color = np.zeros(3)
 
 nodes_count = 0
-pcd_combined_for_vis = o3d.geometry.PointCloud()
+pcd_combined_gt = o3d.geometry.PointCloud()
+pcd_combined_naive = o3d.geometry.PointCloud()
 
 for node_idx in range(len(scan_files)):
     if(node_idx < scan_idx_range_to_stack[0] or node_idx >= scan_idx_range_to_stack[1]):
@@ -142,6 +143,7 @@ for node_idx in range(len(scan_files)):
     scan.colorize()
 
     scan_pcd = o3d.geometry.PointCloud()
+    scan_pcd_naive = o3d.geometry.PointCloud()
     mask = None
 
     """
@@ -223,13 +225,29 @@ for node_idx in range(len(scan_files)):
     Voxel-based downsampling
     '''
     reduced_scan = scan_pcd_global.voxel_down_sample(voxel_size=0.1)
-    pcd_combined_for_vis += reduced_scan # open3d pointcloud class append is fast
+    pcd_combined_gt += reduced_scan # open3d pointcloud class append is fast
+
+    scan_pcd_naive.points = o3d.utility.Vector3dVector(scan.points)
+    scan_pcd_naive.colors = o3d.utility.Vector3dVector(scan.sem_label_color)
+    pcd_combined_naive += scan_pcd_naive.transform(ExtrinsicLiDARtoPoseBase).transform(scan_pose).voxel_down_sample(voxel_size=0.1)
  
 
 print("Final downsampling")
-pcd_combined_for_vis = pcd_combined_for_vis.voxel_down_sample(voxel_size=0.1)
+pcd_combined_gt = pcd_combined_gt.voxel_down_sample(voxel_size=0.1)
+pcd_combined_naive = pcd_combined_naive.voxel_down_sample(voxel_size=0.1)
 
-vis.add_geometry(pcd_combined_for_vis)
+print("GT cloud num points: ", len(pcd_combined_gt.points))
+print("Naive cloud num points: ", len(pcd_combined_naive.points))
+
+vis.add_geometry(pcd_combined_gt)
+
+vis.run()
+vis.destroy_window()
+
+vis.create_window('Map', visible = True)
+vis.get_render_option().point_size = 1.0
+vis.get_render_option().background_color = np.zeros(3)
+vis.add_geometry(pcd_combined_naive)
 
 vis.run()
 vis.destroy_window()
@@ -238,5 +256,10 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 map_dir = os.path.join(cur_dir, "maps")
 map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + "_" + "_".join(filter_options) + ".pcd"
 map_path = os.path.join(map_dir, map_name)
-o3d.io.write_point_cloud(map_path, pcd_combined_for_vis)
+o3d.io.write_point_cloud(map_path, pcd_combined_gt)
 print("the map is save to:", map_path, ")")
+
+naive_map_name = "naive_" + map_name
+naive_path = os.path.join(map_dir, naive_map_name)
+o3d.io.write_point_cloud(naive_path, pcd_combined_naive)
+print("the naive acculmulated map is saved to ", naive_path)
