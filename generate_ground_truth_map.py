@@ -21,35 +21,24 @@ def read_bin(bin_path):
 
     return scan
 
-
 ##########################
 # User only consider this block
 ##########################
 sequence = "00"
 data_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/" + sequence + "/" # should end with / 
 node_skip = 4
-
-num_points_in_a_scan = 150000 # for reservation (save faster) // e.g., use 150000 for 128 ray lidars, 100000 for 64 ray lidars, 30000 for 16 ray lidars, if error occured, use the larger value.
-
-is_live_vis = False # recommend to use false 
-is_o3d_vis = True
-intensity_color_max = 200
-
-is_near_removal = True
 thres_near_removal = 3 # meter (to remove platform-myself structure ghost points)
+
+# filter_options = ["moving", "vehicles", "ground", "sidewalk"]
+filter_options = ["moving", "vehicles"]
+# filter_options = ["moving"]
 
 ##########################
 
-
-#
-# scan_dir = data_dir + "Scans"
 scan_dir = data_dir + "velodyne"
-# scan_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset_projected_0/sequences/00/ground_segmentation/non_ground"
 
 scan_files = os.listdir(scan_dir) 
 scan_files.sort()
-
-# scan_idx_range_to_stack = [0, len(scan_files)] # if you want a whole map, use [0, len(scan_files)]
 scan_idx_range_to_stack = [100, 300] # if you want a whole map, use [0, len(scan_files)]
 
 # pose_file = "00_poses_kitti.txt"
@@ -59,7 +48,6 @@ pose_file = "poses.txt"
 
 # Label file
 label_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/data_odometry_labels/dataset/sequences/00/labels"
-# /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/data_odometry_labels/dataset/sequences/00/labels/000000.label
 
 default_config="../semantic-kitti-api/config/semantic-kitti.yaml"
 
@@ -74,9 +62,7 @@ except Exception as e:
 
 color_dict = CFG["color_map"]
 #######################################################################
-# filter_options = ["moving", "vehicles", "ground", "sidewalk"]
-filter_options = ["moving", "vehicles"]
-# filter_options = ["moving"]
+
 
 #######################################################################
 
@@ -183,11 +169,6 @@ for node_idx in range(len(scan_files)):
   259: "moving-other-vehicle"
     """
     ''' PART 2a
-    Filter points too close
-    '''
-    # scan_ranges = LA.norm(np.asarray(scan_pcd.points), axis=1)
-
-    ''' PART 2b
     Filter based on point label
     '''
     mask = scan.sem_label != 1
@@ -213,6 +194,10 @@ for node_idx in range(len(scan_files)):
     scan_pcd_global = scan_pcd.transform(ExtrinsicLiDARtoPoseBase)
     scan_pcd_global = scan_pcd.transform(scan_pose) # global coord, note that this is not deepcopy
 
+
+    ''' PART 2b
+    Filter points too close
+    '''
     scan_ranges = LA.norm(scan_xyz_local, axis=1)
     eff_idxes = np.where (scan_ranges > thres_near_removal)
     scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
