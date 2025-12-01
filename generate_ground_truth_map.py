@@ -27,7 +27,7 @@ def read_bin(bin_path):
 ##########################
 sequence = "00"
 data_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/" + sequence + "/" # should end with / 
-node_skip = 2
+node_skip = 4
 
 num_points_in_a_scan = 150000 # for reservation (save faster) // e.g., use 150000 for 128 ray lidars, 100000 for 64 ray lidars, 30000 for 16 ray lidars, if error occured, use the larger value.
 
@@ -73,7 +73,10 @@ except Exception as e:
     quit()
 
 color_dict = CFG["color_map"]
-
+#######################################################################
+filter_options = ["moving", "vehicles", "ground", "sidewalk"]
+# filter_options = ["moving", "vehicles"]
+# filter_option = "moving"
 
 #######################################################################
 
@@ -138,29 +141,69 @@ for node_idx in range(len(scan_files)):
     scan.open_label(label_path)
     scan.colorize()
 
-    mask = (scan.sem_label == 252)
-
-    selected_points = scan.points
-
     scan_pcd = o3d.geometry.PointCloud()
-    scan_pcd.points = o3d.utility.Vector3dVector(selected_points)
+    mask = None
+
+    """
+  0 : "unlabeled"
+  1 : "outlier"
+  10: "car"
+  11: "bicycle"
+  13: "bus"
+  15: "motorcycle"
+  16: "on-rails"
+  18: "truck"
+  20: "other-vehicle"
+  30: "person"
+  31: "bicyclist"
+  32: "motorcyclist"
+  40: "road"
+  44: "parking"
+  48: "sidewalk"
+  49: "other-ground"
+  50: "building"
+  51: "fence"
+  52: "other-structure"
+  60: "lane-marking"
+  70: "vegetation"
+  71: "trunk"
+  72: "terrain"
+  80: "pole"
+  81: "traffic-sign"
+  99: "other-object"
+  252: "moving-car"
+  253: "moving-bicyclist"
+  254: "moving-person"
+  255: "moving-motorcyclist"
+  256: "moving-on-rails"
+  257: "moving-bus"
+  258: "moving-truck"
+  259: "moving-other-vehicle"
+    """
+
+    ''' PART 2
+    Filter based on point label
+    '''
+    mask = scan.sem_label != 1
+    if("moving" in filter_options):
+        mask &= (scan.sem_label < 252)
+    if("vehicles" in filter_options):
+        m1 = scan.sem_label < 10
+        m2 = scan.sem_label > 32
+        m3 = scan.sem_label < 252
+        mask = (m1 | (m2 & m3)) & mask
+    if("ground" in filter_options):
+        mask &= (scan.sem_label != 40) # road
+        mask &= (scan.sem_label != 49) # other ground
+        mask &= (scan.sem_label != 60) # lane markings
+    if("sidewalk" in filter_options):
+        mask &= (scan.sem_label != 48)
+
+    scan_pcd.points = o3d.utility.Vector3dVector(scan.points[mask])
+    scan_pcd.colors = o3d.utility.Vector3dVector(scan.sem_label_color[mask])
 
     scan_pcd_global = scan_pcd.transform(ExtrinsicLiDARtoPoseBase)
     scan_pcd_global = scan_pcd.transform(scan_pose) # global coord, note that this is not deepcopy
-
-    scan_pcd.colors = o3d.utility.Vector3dVector(scan.sem_label_color)
-
-    ''' PART 2
-    Filter out points too close to the sensor
-    '''
-    # scan_ranges = LA.norm(scan_xyz_local, axis=1)
-
-    # if(is_near_removal):
-    #     eff_idxes = np.where (scan_ranges > thres_near_removal)
-    #     scan_xyz = scan_xyz[eff_idxes[0], :]
-    #     scan_intensity = scan_intensity[eff_idxes[0], :]
-
-    #     scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
 
     ''' PART 3
     Voxel-based downsampling
