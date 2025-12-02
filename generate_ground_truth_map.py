@@ -52,7 +52,7 @@ else:
 ##########################
 # User only consider this block
 ##########################
-if(MAP_CONFIG.get("filters") is None):
+if(MAP_CONFIG.get("sequence") is None):
     sequence = args.sequence
 else:
     sequence = MAP_CONFIG["sequence"]
