@@ -17,12 +17,8 @@ def read_bin(bin_path):
 ##########################
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--sequence", default="00")
 parser.add_argument("--config") #"configs/config0.yaml"
 parser.add_argument("--visualize-only", action='store_true') #"configs/config0.yaml"
-
-# pose_file = "00_poses_kitti.txt"
-# pose_dir = "/home/joseph/catkin/scaloam_ws/src/SC-A-LOAM/utils/python/results/latest/"
 
 args = parser.parse_args()
 map_config_file = args.config
@@ -35,26 +31,26 @@ except Exception as e:
     print("Error opening yaml file.")
     quit()
 
-##########################
-# User only consider this block
-##########################
-if(MAP_CONFIG.get("filters") is None):
+if(MAP_CONFIG.get("sequence") is None):
     sequence = args.sequence
 else:
     sequence = MAP_CONFIG["sequence"]
 
-data_path = MAP_CONFIG["data_path"]
-data_dir = os.path.join(data_path, sequence)
-
-thres_near_removal = MAP_CONFIG["removal_thresh"] # meter (to remove platform-myself structure ghost points)
+scan_dir = MAP_CONFIG["scans_path"]
+if(MAP_CONFIG.get("removal_thresh") is None):
+    thres_near_removal = None
+else:
+    thres_near_removal = MAP_CONFIG["removal_thresh"] # meter (to remove platform-myself structure ghost points)
 
 if(MAP_CONFIG.get("skip") is None):
     node_skip = 1
 else:
     node_skip = MAP_CONFIG["skip"]
-##########################
 
-scan_dir = os.path.join(data_dir, "velodyne")
+calibration_path = MAP_CONFIG["calib_path"]
+pose_file_path = MAP_CONFIG["pose_path"]
+output_folder = MAP_CONFIG["output_folder"]
+##########################
 
 scan_files = os.listdir(scan_dir) 
 scan_files.sort()
@@ -80,16 +76,12 @@ print("==========================================================")
 
 scan_idx_range_to_stack = [startIdx, endIdx] # if you want a whole map, use [0, len(scan_files)]
 
-pose_dir = data_dir
-pose_file = "poses.txt"
-
 #######################################################################
 
 
 #######################################################################
 
 poses = []
-pose_file_path = os.path.join(pose_dir, pose_file)
 f = open(pose_file_path, 'r')
 while True:
     line = f.readline()
@@ -99,7 +91,6 @@ while True:
     poses.append(pose_SE3)
 f.close()
 
-calibration_path = os.path.join(data_dir, "calib.txt")
 
 calib_data = np.loadtxt(calibration_path, delimiter=' ', dtype=str)
 transform_data = calib_data[4][1:13].astype(float).reshape((3,4))
@@ -182,8 +173,8 @@ vis.destroy_window()
 
 if(args.visualize_only != True):
     cur_dir = os.path.dirname(os.path.abspath(__file__))
-    map_dir = os.path.join(cur_dir, "maps")
-    map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + "_" + "_".join(filter_options) + ".pcd"
+    map_dir = output_folder
+    map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + ".pcd"
     map_path = os.path.join(map_dir, map_name)
     o3d.io.write_point_cloud(map_path, pcd_combined)
     print("the map is saved to:", map_path, ")")

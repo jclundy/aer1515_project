@@ -1,0 +1,12 @@
+start_idx: 100
+end_idx: 300
+skip: 4
+#removal_thresh: 3
+sequence: "00"
+output_folder: "maps/no_more_potentially_dynamic_objects"
+# scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/00/velodyne/"
+scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/00/projected/"
+calib_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/00/calib.txt"
+pose_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/00/estimated_odometry/kiss_icp/00_poses_kitti.txt"
+#GT cloud num points:  966968
+                      #1253248
