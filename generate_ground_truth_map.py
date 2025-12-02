@@ -22,24 +22,83 @@ def read_bin(bin_path):
     return scan
 
 ##########################
+# Parse Arguments
+##########################
+default_filter_options = ["moving", "vehicles"]
+
+
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--sequence", default="00")
+parser.add_argument("--config") #"configs/config0.yaml"
+
+args = parser.parse_args()
+map_config_file = args.config
+# open config file
+try:
+    print("Opening map config file %s" % map_config_file)
+    MAP_CONFIG = yaml.safe_load(open(map_config_file, 'r'))
+except Exception as e:
+    print(e)
+    print("Error opening yaml file.")
+    quit()
+
+if(MAP_CONFIG.get("filters") is None):
+    filter_options = []
+else:
+    filter_options = MAP_CONFIG["filters"]
+
+##########################
 # User only consider this block
 ##########################
-sequence = "00"
-data_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/" + sequence + "/" # should end with / 
-node_skip = 4
-thres_near_removal = 3 # meter (to remove platform-myself structure ghost points)
+if(MAP_CONFIG.get("filters") is None):
+    sequence = args.sequence
+else:
+    sequence = MAP_CONFIG["sequence"]
+
+data_path = MAP_CONFIG["data_path"]
+data_dir = os.path.join(data_path, sequence)
+
+thres_near_removal = MAP_CONFIG["removal_thresh"] # meter (to remove platform-myself structure ghost points)
+
+if(MAP_CONFIG.get("skip") is None):
+    node_skip = 1
+else:
+    node_skip = MAP_CONFIG["skip"]
 
 # filter_options = ["moving", "vehicles", "ground", "sidewalk"]
-filter_options = ["moving", "vehicles"]
+# filter_options = ["moving", "vehicles"]
 # filter_options = ["moving"]
+
 
 ##########################
 
-scan_dir = data_dir + "velodyne"
+scan_dir = os.path.join(data_dir, "velodyne")
 
 scan_files = os.listdir(scan_dir) 
 scan_files.sort()
-scan_idx_range_to_stack = [100, 300] # if you want a whole map, use [0, len(scan_files)]
+
+if(MAP_CONFIG.get("start_idx") is None):
+    startIdx = 0
+else:
+    startIdx = MAP_CONFIG["start_idx"]
+
+if(MAP_CONFIG.get("end_idx") is None):
+    endIdx = len(scan_files)
+else:
+    endIdx = MAP_CONFIG["end_idx"]
+
+print("==========================================================")
+print("Running ground truth map generation with these parameters:")
+print("sequence", sequence)
+print("removal thresh", thres_near_removal)
+print("skip", node_skip)
+print("filter options", filter_options)
+print("start_idx", startIdx)
+print("end_idx", endIdx)
+print("==========================================================")
+
+scan_idx_range_to_stack = [startIdx, endIdx] # if you want a whole map, use [0, len(scan_files)]
 
 # pose_file = "00_poses_kitti.txt"
 # pose_dir = "/home/joseph/catkin/scaloam_ws/src/SC-A-LOAM/utils/python/results/latest/"
@@ -47,7 +106,7 @@ pose_dir = data_dir
 pose_file = "poses.txt"
 
 # Label file
-label_dir = "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/data_odometry_labels/dataset/sequences/00/labels"
+label_dir = os.path.join(data_dir,"labels")
 
 default_config="../semantic-kitti-api/config/semantic-kitti.yaml"
 
@@ -67,7 +126,8 @@ color_dict = CFG["color_map"]
 #######################################################################
 
 poses = []
-f = open(pose_dir+pose_file, 'r')
+pose_file_path = os.path.join(pose_dir, pose_file)
+f = open(pose_file_path, 'r')
 while True:
     line = f.readline()
     if not line: break
@@ -198,13 +258,13 @@ for node_idx in range(len(scan_files)):
     ''' PART 2b
     Filter points too close
     '''
-    scan_ranges = LA.norm(scan_xyz_local, axis=1)
-    eff_idxes = np.where (scan_ranges > thres_near_removal)
-    scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
+    if(thres_near_removal is not None):
+        scan_ranges = LA.norm(scan_xyz_local, axis=1)
+        eff_idxes = np.where (scan_ranges > thres_near_removal)
+        scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
 
-    points_removed = len(scan_ranges) - len(eff_idxes[0])
-    print("number of points removed by range check:", points_removed)
-
+        points_removed = len(scan_ranges) - len(eff_idxes[0])
+        print("number of points removed by range check:", points_removed)
 
     ''' PART 3
     Voxel-based downsampling
