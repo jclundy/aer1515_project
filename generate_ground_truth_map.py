@@ -137,12 +137,15 @@ while True:
     poses.append(pose_SE3)
 f.close()
 
- # this is for KITTI 
-ExtrinsicLiDARtoPoseBase = np.asarray([-1.857e-03, -9.999e-01, -8.039e-03, -4.784e-03,
-       -6.481e-03,  8.0518e-03, -9.999e-01, -7.337e-02,
-        9.999e-01, -1.805e-03, -6.496e-03, -3.339e-01,
-        0.0,        0.0,        0.0,        1.0])
-ExtrinsicLiDARtoPoseBase = np.reshape(ExtrinsicLiDARtoPoseBase,(4,4))
+calibration_path = os.path.join(data_dir, "calib.txt")
+
+calib_data = np.loadtxt(calibration_path, delimiter=' ', dtype=str)
+transform_data = calib_data[4][1:13].astype(float).reshape((3,4))
+H_r4 = [0.0, 0.0, 0.0, 1.0]
+
+ExtrinsicLiDARtoPoseBase = np.vstack([transform_data, H_r4])
+print("ExtrinsicLiDARtoPoseBase.shape=", ExtrinsicLiDARtoPoseBase.shape)
+print("ExtrinsicLiDARtoPoseBase=", ExtrinsicLiDARtoPoseBase)
 
 #
 assert (scan_idx_range_to_stack[1] > scan_idx_range_to_stack[0])
