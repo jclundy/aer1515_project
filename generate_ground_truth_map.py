@@ -31,7 +31,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--sequence", default="00")
 parser.add_argument("--config") #"configs/config0.yaml"
-parser.add_argument("--visualize-only", action='store_true') #"configs/config0.yaml"
+parser.add_argument("--visualize", action='store_true') #"configs/config0.yaml"
+parser.add_argument("--no-save", action='store_true') #"configs/config0.yaml"
 
 args = parser.parse_args()
 map_config_file = args.config
@@ -153,11 +154,6 @@ print("Merging scans from", scan_idx_range_to_stack[0], "to", scan_idx_range_to_
 
 
 #
-vis = o3d.visualization.Visualizer() 
-vis.create_window('Map', visible = True) 
-vis.get_render_option().point_size = 1.0
-vis.get_render_option().background_color = np.zeros(3)
-
 nodes_count = 0
 pcd_combined_gt = o3d.geometry.PointCloud()
 pcd_combined_naive = o3d.geometry.PointCloud()
@@ -288,20 +284,27 @@ pcd_combined_naive = pcd_combined_naive.voxel_down_sample(voxel_size=0.1)
 print("GT cloud num points: ", len(pcd_combined_gt.points))
 print("Naive cloud num points: ", len(pcd_combined_naive.points))
 
-vis.add_geometry(pcd_combined_gt)
+if(args.visualize == True):
+    print("visualizing point cloud - ground truth")
+    vis = o3d.visualization.Visualizer()
+    vis.create_window('Map', visible = True)
+    vis.get_render_option().point_size = 1.0
+    vis.get_render_option().background_color = np.zeros(3)
+    vis.add_geometry(pcd_combined_gt)
 
-vis.run()
-vis.destroy_window()
+    vis.run()
+    vis.destroy_window()
 
-vis.create_window('Map', visible = True)
-vis.get_render_option().point_size = 1.0
-vis.get_render_option().background_color = np.zeros(3)
-vis.add_geometry(pcd_combined_naive)
+    print("visualizing point - naive")
+    vis.create_window('Map', visible = True)
+    vis.get_render_option().point_size = 1.0
+    vis.get_render_option().background_color = np.zeros(3)
+    vis.add_geometry(pcd_combined_naive)
 
-vis.run()
-vis.destroy_window()
+    vis.run()
+    vis.destroy_window()
 
-if(args.visualize_only != True):
+if(args.no_save == False):
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     map_dir = os.path.join(cur_dir, "maps")
     map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + "_" + "_".join(filter_options) + ".pcd"
