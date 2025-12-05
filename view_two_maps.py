@@ -62,23 +62,23 @@ def visualization():
 
     voxel_visual = o3d.geometry.VoxelGrid.create_from_point_cloud(pcd_voxel_final, voxel_size=voxel_setting)
 
-    # print("showing point clouds")
-    # vis.create_window('Map', visible = True) 
-    # vis.get_render_option().point_size = 1.0
-    # vis.get_render_option().background_color = np.zeros(3)
-    # vis.add_geometry(est_pcd_sampled)
-    # vis.add_geometry(gt_pcd_sampled)
-
-    # vis.run()
-    # vis.destroy_window()
-
-    print("showing voxel grid")
+    print("showing point clouds")
     vis.create_window('Map', visible = True)
     vis.get_render_option().point_size = 1.0
     vis.get_render_option().background_color = np.zeros(3)
-    vis.add_geometry(voxel_visual)
+    vis.add_geometry(est_pcd_sampled)
+    vis.add_geometry(gt_pcd_sampled)
+
     vis.run()
     vis.destroy_window()
+
+    # print("showing voxel grid")
+    # vis.create_window('Map', visible = True)
+    # vis.get_render_option().point_size = 1.0
+    # vis.get_render_option().background_color = np.zeros(3)
+    # vis.add_geometry(voxel_visual)
+    # vis.run()
+    # vis.destroy_window()
 
     if(args.save):
         est_pcd_name = os.path.basename(est_pcd_path)
