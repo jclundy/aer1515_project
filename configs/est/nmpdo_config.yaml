@@ -1,6 +1,7 @@
 sequence: "03"
-output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/object_detect_results/03/pointpillars/"
-scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/object_detect_results/03/pointpillars/projected"
+output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/object_detect_results/03/voxelnext/"
+scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/object_detect_results/03/voxelnext/projected"
 calib_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/calib.txt"
 pose_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/poses.txt"
 voxel: 0.2
+removal_thresh: 2.7
