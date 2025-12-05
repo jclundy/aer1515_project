@@ -12,9 +12,7 @@ def compare_maps():
     parser = argparse.ArgumentParser()
     parser.add_argument("--ground-truth") #"maps/map_sequence_00_100_to_300_moving_vehicles.pcd"
     parser.add_argument("--map") #"maps/map_sequence_00_100_to_300_moving.pcd"
-    parser.add_argument("--voxel-size", default=0.5)
-
-    voxel_size_setting = 0.5
+    parser.add_argument("--voxel-size", default=0.2, type=float)
 
     args = parser.parse_args()
     voxel_size_setting = args.voxel_size
