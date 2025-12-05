@@ -15,6 +15,7 @@ def visualization():
     parser.add_argument("--est")  # "maps/map_sequence_00_100_to_300_moving_vehicles.pcd"
     parser.add_argument("--voxel-size", default=0.5,type=float)
     parser.add_argument("--gt")  # "maps/map_sequence_00_100_to_300_moving_vehicles.pcd"
+    parser.add_argument("--save", action='store_true')
 
     args = parser.parse_args()
     est_pcd_path = args.est
@@ -79,6 +80,15 @@ def visualization():
     vis.run()
     vis.destroy_window()
 
+    if(args.save):
+        est_pcd_name = os.path.basename(est_pcd_path)
+        est_pcd_dir = os.path.dirname(est_pcd_path)
+        compare_pcd_name = "compare_" + est_pcd_name
+
+        compare_pcd_path = os.path.join(est_pcd_dir, compare_pcd_name)
+
+        o3d.io.write_point_cloud(compare_pcd_path, pcd_voxel_final)
+        print("comparison map is saved to ", compare_pcd_path)
 
 
 

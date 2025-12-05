@@ -79,3 +79,44 @@ https://robostack.github.io/GettingStarted.html
 # Kiss ICP
 https://github.com/PRBonn/kiss-icp/blob/main/python/README.md
 kiss_icp_pipeline --dataloader kitti --sequence 00 --visualize /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset
+
+
+# Removert
+conda activate ros_env
+source devel/setup.bash
+roslaunch removert run_kitti.launch # if you use KITTI dataset 
+
+# Lidar-MOS
+
+# first update data_preparing.yaml file to point to right sequence
+# run 
+python utils/gen_residual_images.py
+# then update post_processing.yaml 
+
+# No more potentially dynamic objects
+conda activate patchworkplus
+python ground_segmentation.py
+
+
+## openPCDet
+conda activate openPCDet
+cd ~/catkin/git/OpenPCDet/tools
+## pv rcnn
+python demo.py --cfg_file cfgs/kitti_models/pv_rcnn.yaml --ckpt ~/Downloads/pv_rcnn_8369.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/
+
+## point pillars
+python demo.py --cfg_file cfgs/kitti_models/pointpillar_copy.yaml --ckpt ~/Downloads/pointpillar_7728.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/
+
+## voxelneXt
+cd ~/catkin/git/VoxelNeXt/tools
+python demo.py --cfg_file cfgs/kitti_models/voxelnext_copy.yaml --ckpt ../output/kitti_models/voxelnext/default/ckpt/checkpoint_epoch_16.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/
+
+
+## save bounding boxes
+python save_bounding_boxes.py --cfg_file cfgs/kitti_models/pv_rcnn.yaml --ckpt ~/Downloads/pv_rcnn_8369.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/ --output /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/object_detect_results/03/rcnn/
+python save_bounding_boxes.py --cfg_file cfgs/kitti_models/pointpillar_copy.yaml --ckpt ~/Downloads/pointpillar_7728.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/ --output /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/object_detect_results/03/pointpillars/
+
+python save_bounding_boxes.py --cfg_file cfgs/kitti_models/voxelnext_copy.yaml --ckpt ../output/kitti_models/voxelnext/default/ckpt/checkpoint_epoch_16.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/ --output /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/object_detect_results/03/voxelnext/
+
+## ground projection
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/object_detect_results/03/pointpillars/360/detections.pkl

@@ -106,11 +106,6 @@ print("Merging scans from", scan_idx_range_to_stack[0], "to", scan_idx_range_to_
 
 
 #
-vis = o3d.visualization.Visualizer() 
-vis.create_window('Map', visible = True) 
-vis.get_render_option().point_size = 1.0
-vis.get_render_option().background_color = np.zeros(3)
-
 nodes_count = 0
 pcd_combined = o3d.geometry.PointCloud()
 
@@ -165,6 +160,11 @@ print("Final downsampling")
 pcd_combined = pcd_combined.voxel_down_sample(voxel_size=0.1)
 
 print("GT cloud num points: ", len(pcd_combined.points))
+
+vis = o3d.visualization.Visualizer()
+vis.create_window('Map', visible = True)
+vis.get_render_option().point_size = 1.0
+vis.get_render_option().background_color = np.zeros(3)
 
 vis.add_geometry(pcd_combined)
 
