@@ -271,7 +271,7 @@ for node_idx in range(len(scan_files)):
         scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
 
         points_removed = len(scan_ranges) - len(eff_idxes[0])
-        print("number of points removed by range check:", points_removed)
+        # print("number of points removed by range check:", points_removed)
 
     ''' PART 3
     Voxel-based downsampling

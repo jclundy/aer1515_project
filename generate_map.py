@@ -118,7 +118,7 @@ for node_idx in range(len(scan_files)):
         if(node_idx != scan_idx_range_to_stack[0]): # to ensure the vis init 
             continue
 
-    print("read keyframe scan idx", node_idx)
+    # print("read keyframe scan idx", node_idx)
 
     scan_pose = poses[node_idx]
 
@@ -148,7 +148,7 @@ for node_idx in range(len(scan_files)):
         scan_pcd_global = scan_pcd_global.select_by_index(eff_idxes[0])
 
         points_removed = len(scan_ranges) - len(eff_idxes[0])
-        print("number of points removed by range check:", points_removed)
+        # print("number of points removed by range check:", points_removed)
 
     ''' PART 2
     Voxel-based downsampling
