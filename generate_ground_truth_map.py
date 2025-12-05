@@ -90,6 +90,11 @@ if(MAP_CONFIG.get("end_idx") is None):
 else:
     endIdx = MAP_CONFIG["end_idx"]
 
+if(MAP_CONFIG.get("voxel") is None):
+    voxel_setting = 0.1
+else:
+    voxel_setting = MAP_CONFIG["voxel"]
+
 print("==========================================================")
 print("Running ground truth map generation with these parameters:")
 print("sequence", sequence)
@@ -98,6 +103,8 @@ print("skip", node_skip)
 print("filter options", filter_options)
 print("start_idx", startIdx)
 print("end_idx", endIdx)
+print("voxel_setting", voxel_setting)
+
 print("==========================================================")
 
 scan_idx_range_to_stack = [startIdx, endIdx] # if you want a whole map, use [0, len(scan_files)]
@@ -269,17 +276,17 @@ for node_idx in range(len(scan_files)):
     ''' PART 3
     Voxel-based downsampling
     '''
-    reduced_scan = scan_pcd_global.voxel_down_sample(voxel_size=0.1)
+    reduced_scan = scan_pcd_global.voxel_down_sample(voxel_size=voxel_setting)
     pcd_combined_gt += reduced_scan # open3d pointcloud class append is fast
 
     scan_pcd_naive.points = o3d.utility.Vector3dVector(scan.points)
     scan_pcd_naive.colors = o3d.utility.Vector3dVector(scan.sem_label_color)
-    pcd_combined_naive += scan_pcd_naive.transform(ExtrinsicLiDARtoPoseBase).transform(scan_pose).voxel_down_sample(voxel_size=0.1)
+    pcd_combined_naive += scan_pcd_naive.transform(ExtrinsicLiDARtoPoseBase).transform(scan_pose).voxel_down_sample(voxel_size=voxel_setting)
  
 
 print("Final downsampling")
-pcd_combined_gt = pcd_combined_gt.voxel_down_sample(voxel_size=0.1)
-pcd_combined_naive = pcd_combined_naive.voxel_down_sample(voxel_size=0.1)
+pcd_combined_gt = pcd_combined_gt.voxel_down_sample(voxel_size=voxel_setting)
+pcd_combined_naive = pcd_combined_naive.voxel_down_sample(voxel_size=voxel_setting)
 
 print("GT cloud num points: ", len(pcd_combined_gt.points))
 print("Naive cloud num points: ", len(pcd_combined_naive.points))

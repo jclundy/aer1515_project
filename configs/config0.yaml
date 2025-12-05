@@ -1,8 +1,9 @@
 #filters: ["moving", "vehicles"]
 filters: ["moving"]
-start_idx: 0
-end_idx: 50
-#skip: 1
-sequence: "01"
+# start_idx: 100
+# end_idx: 300
+# skip: 1
+sequence: "03"
 data_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/"
-removal_thresh: 3
+removal_thresh: 2.7
+voxel: 0.2
