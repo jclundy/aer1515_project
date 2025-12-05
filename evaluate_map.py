@@ -57,6 +57,9 @@ def compare_maps():
     print("precision=",precision, "; recall=", recall)
 
     print("===================================")
+    print("Est voxel grid num voxels:",len(est_voxel_grid.get_voxels()))
+    print("Est cloud num points:", len(est_pcd.points))
+
     print("Metrics using naive map")
     num_gt_voxels = len(gt_voxel_grid.get_voxels())
     num_gt_points = len(gt_pcd.points)
