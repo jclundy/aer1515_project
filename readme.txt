@@ -120,3 +120,140 @@ python save_bounding_boxes.py --cfg_file cfgs/kitti_models/voxelnext_copy.yaml -
 
 ## ground projection
 python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/object_detect_results/03/pointpillars/360/detections.pkl
+
+# No More potentially dynamic objects
+# Point Pillars 0.5
+python save_bounding_boxes.py --cfg_file cfgs/kitti_models/pointpillar_copy.yaml --ckpt ~/Downloads/pointpillar_7728.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/ --output /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars
+
+#python save_bounding_boxes.py --cfg_file cfgs/kitti_models/pv_rcnn.yaml --ckpt ~/Downloads/pv_rcnn_8369.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/ --output /joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.5
+
+
+# Ground projection - point pillars
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/detections.pkl --conf 0.3
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/detections.pkl --conf 0.5
+
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/04/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/detections.pkl --conf 0.3
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/04/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/detections.pkl --conf 0.5
+
+# Ground projection - RCNN
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/detections.pkl --conf 0.3
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/detections.pkl --conf 0.5
+
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/04/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/detections.pkl --conf 0.3
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/04/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/detections.pkl --conf 0.5
+
+
+# Map evaluation
+## Map 03
+### Point pillars
+ python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.3/map_sequence_03_0_to_801.pcd --voxel-size=0.2
+ python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.5/map_sequence_03_0_to_801.pcd --voxel-size=0.2
+ 
+ ### RCNN
+ python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.3/map_sequence_03_0_to_801.pcd --voxel-size=0.2
+ python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.5/map_sequence_03_0_to_801.pcd --voxel-size=0.2
+ 
+ ## Map 04
+### Point pillars
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/0.3/map_sequence_04_0_to_271.pcd --voxel-size=0.2
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/0.5/map_sequence_04_0_to_271.pcd --voxel-size=0.2
+ 
+ ### RCNN
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/0.3/map_sequence_04_0_to_271.pcd --voxel-size=0.2
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/0.5/map_sequence_04_0_to_271.pcd --voxel-size=0.2
+
+ # Lidar-MOS
+## Data preparation
+Copy over sequences 04 and 03 to LiDAR-MOS/data/sequences
+## Generate semantic results
+1. Modify config/data_preparing:
+ For sequence 04
+```
+ # the folder of raw LiDAR scans
+scan_folder: 'data/sequences/04/velodyne'
+# ground truth poses file
+pose_file: 'data/sequences/04/poses.txt'
+# calibration file
+calib_file: 'data/sequences/04/calib.txt'
+
+# Outputs
+# the suffix should be the same as num_last_n!
+residual_image_folder: 'data/sequences/04/residual_images_1'
+visualize: True
+visualization_folder: 'data/sequences/04/visualization_1'
+``
+
+ For sequence 03
+```
+ # the folder of raw LiDAR scans
+scan_folder: 'data/sequences/03/velodyne'
+# ground truth poses file
+pose_file: 'data/sequences/03/poses.txt'
+# calibration file
+calib_file: 'data/sequences/03/calib.txt'
+
+# Outputs
+# the suffix should be the same as num_last_n!
+residual_image_folder: 'data/sequences/03/residual_images_1'
+visualize: True
+visualization_folder: 'data/sequences/03/visualization_1'
+``
+2. Run `python utils/gen_residual_images.py`.  Needs to be run separately for each data set 
+## Generate MOS predictions
+1. Update config file in the model_folder:
+model_rangenet_residual_1/for_release/data_cfg.yaml
+The split should be defined as:
+
+```
+split: # sequence numbers
+  train:
+    - 0
+    - 1
+    - 2
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+  valid:
+    - 4
+    - 3
+  test:
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    - 21
+```
+
+2. Run infer.py
+This only needs to be run once.  It will do the segmentation for all the folders listed under valid in the model's data_cfg.yaml file
+```
+cd LiDAR-MOS/mos_RangeNet/tasks/semantic
+python infer.py -d /home/joseph/catkin/git/LiDAR-MOS/data/ -l /home/joseph/catkin/git/LiDAR-MOS/logs/ -m /home/joseph/Downloads/model_rangenet_residual_1/for_release --split valid
+```
+
+## Clean scans
+1. Ensure config/post-processing.yaml has the correct fields:
+```
+# the root of raw LiDAR scans
+scan_root: 'data'
+# the root of mos predictions
+mos_pred_root: 'logs'
+
+# Outputs
+split: valid  # choose from (train, valid, test)
+clean_scan_root: 'data'
+```
+2. Run utils/scan_cleaner.py
+```
+python utils/scan_cleaner.py
+```
+This will output the cleaned scans to /data/sequences/[SEQ]/clean_scans/ 

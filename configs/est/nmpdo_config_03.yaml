@@ -1,0 +1,39 @@
+# sequence: "03"
+# output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/object_detect_results/03/voxelnext/conf_0.3/"
+# scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/object_detect_results/03/voxelnext/conf_0.3/projected"
+# calib_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/calib.txt"
+# pose_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/poses.txt"
+# voxel: 0.2
+# removal_thresh: 2.7
+
+sequence: "03"
+output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.3/"
+scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.3/projected"
+calib_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/calib.txt"
+pose_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/poses.txt"
+voxel: 0.2
+removal_thresh: 2.7
+
+# sequence: "03"
+# output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.5/"
+# scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.5/projected"
+# calib_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/calib.txt"
+# pose_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/poses.txt"
+# voxel: 0.2
+# removal_thresh: 2.7
+
+# sequence: "03"
+# output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.3/"
+# scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.3/projected"
+# calib_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/calib.txt"
+# pose_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/poses.txt"
+# voxel: 0.2
+# removal_thresh: 2.7
+
+# sequence: "03"
+# output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.5/"
+# scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.5/projected"
+# calib_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/calib.txt"
+# pose_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/poses.txt"
+# voxel: 0.2
+# removal_thresh: 2.7

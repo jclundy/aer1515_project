@@ -16,6 +16,7 @@ def visualization():
     parser.add_argument("--voxel-size", default=0.5,type=float)
     parser.add_argument("--gt")  # "maps/map_sequence_00_100_to_300_moving_vehicles.pcd"
     parser.add_argument("--save", action='store_true')
+    parser.add_argument("--show-voxel-grid", action='store_true')
 
     args = parser.parse_args()
     est_pcd_path = args.est
@@ -62,23 +63,26 @@ def visualization():
 
     voxel_visual = o3d.geometry.VoxelGrid.create_from_point_cloud(pcd_voxel_final, voxel_size=voxel_setting)
 
-    print("showing point clouds")
-    vis.create_window('Map', visible = True)
-    vis.get_render_option().point_size = 1.0
-    vis.get_render_option().background_color = np.zeros(3)
-    vis.add_geometry(est_pcd_sampled)
-    vis.add_geometry(gt_pcd_sampled)
 
-    vis.run()
-    vis.destroy_window()
 
-    # print("showing voxel grid")
-    # vis.create_window('Map', visible = True)
-    # vis.get_render_option().point_size = 1.0
-    # vis.get_render_option().background_color = np.zeros(3)
-    # vis.add_geometry(voxel_visual)
-    # vis.run()
-    # vis.destroy_window()
+    if(args.show_voxel_grid):
+        print("showing voxel grid")
+        vis.create_window('Map', visible = True)
+        vis.get_render_option().point_size = 1.0
+        vis.get_render_option().background_color = np.zeros(3)
+        vis.add_geometry(voxel_visual)
+        vis.run()
+        vis.destroy_window()
+    else:
+        print("showing point clouds")
+        vis.create_window('Map', visible = True)
+        vis.get_render_option().point_size = 1.0
+        vis.get_render_option().background_color = np.zeros(3)
+        vis.add_geometry(est_pcd_sampled)
+        vis.add_geometry(gt_pcd_sampled)
+
+        vis.run()
+        vis.destroy_window()
 
     if(args.save):
         est_pcd_name = os.path.basename(est_pcd_path)
