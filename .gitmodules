@@ -19,3 +19,6 @@
 [submodule "mini-kitti-publisher-fork"]
 	path = mini-kitti-publisher-fork
 	url = git@github.com:jclundy/mini-kitti-publisher-fork.git
+[submodule "lidarMOS_fork"]
+	path = lidarMOS_fork
+	url = git@github.com:jclundy/lidarMOS_fork.git
