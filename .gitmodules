@@ -7,3 +7,6 @@
 [submodule "voxelNeXt_fork"]
 	path = voxelNeXt_fork
 	url = git@github.com:jclundy/voxelNeXt_fork.git
+[submodule "semantic-kitti-api"]
+	path = semantic-kitti-api
+	url = https://github.com/PRBonn/semantic-kitti-api.git
