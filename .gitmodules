@@ -16,3 +16,6 @@
 [submodule "removert_fork"]
 	path = removert_fork
 	url = git@github.com:jclundy/removert_fork.git
+[submodule "mini-kitti-publisher-fork"]
+	path = mini-kitti-publisher-fork
+	url = git@github.com:jclundy/mini-kitti-publisher-fork.git
