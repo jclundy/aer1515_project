@@ -1,0 +1,3 @@
+[submodule "no_more_potentially_dynamic_objects_fork"]
+	path = no_more_potentially_dynamic_objects_fork
+	url = https://github.com/jclundy/no_more_potentially_dynamic_objects_fork
