@@ -1,13 +1,24 @@
-start_idx: 100
-end_idx: 300
-skip: 4
-#removal_thresh: 3
-sequence: "00"
-output_folder: "maps/no_more_potentially_dynamic_objects"
-# scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/00/velodyne/"
-scans_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/00/projected/"
-calib_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/00/calib.txt"
-pose_path: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/00/estimated_odometry/kiss_icp/00_poses_kitti.txt"
-#GT cloud num points:  966968
-                      #1253248
+# sequence: "03"
+# output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/LidarMOS/03"
+# scans_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/03/clean_scans"
+# calib_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/03/calib.txt"
+# pose_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/03/poses.txt"
+# voxel: 0.2
+# removal_thresh: 2.7
+
+# sequence: "04"
+# output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/LidarMOS/04"
+# scans_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/04/clean_scans"
+# calib_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/04/calib.txt"
+# pose_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/04/poses.txt"
+# voxel: 0.2
+# removal_thresh: 2.7
+
+sequence: "08"
+output_folder: "/media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/LidarMOS/08"
+scans_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/08/clean_scans"
+calib_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/08/calib.txt"
+pose_path: "/home/joseph/catkin/git/LiDAR-MOS/data/sequences/08/poses.txt"
 voxel: 0.2
+removal_thresh: 2.7
+skip: 5

@@ -32,6 +32,9 @@ cd /media/joseph/7E408025407FE1F7/Datasets/KITTI-ros-bags/KITTI
 # rosbag play [DATASET].bag
 # for example:
 rosbag play 00.bag
+# OR
+python mini_kitti_publisher.py --dir /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/08
+
 ```
 In a third terminal:
 
@@ -47,6 +50,9 @@ rostopic pub /save_map std_msgs/Empty "{}" -1
 roslaunch freedom ground_truth_generate.launch
 # in separate terminal
 rosbag play 00.bag
+# OR
+python mini_kitti_publisher.py --dir /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/08
+
 
 ```
 # evaluate
@@ -79,7 +85,20 @@ https://robostack.github.io/GettingStarted.html
 # Kiss ICP
 https://github.com/PRBonn/kiss-icp/blob/main/python/README.md
 kiss_icp_pipeline --dataloader kitti --sequence 00 --visualize /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset
+kiss_icp_pipeline --visualize <data-dir>
 
+## Regular odometry
+kiss_icp_pipeline --dataloader kitti --sequence 03 --visualize /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset
+kiss_icp_pipeline --dataloader kitti --sequence 04 --visualize /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset
+kiss_icp_pipeline --dataloader kitti --sequence 08 --visualize /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset
+## Lidar-MOS cleaned scans
+kiss_icp_pipeline --visualize /home/joseph/catkin/git/LiDAR-MOS/data/sequences/03/clean_scans
+kiss_icp_pipeline --visualize /home/joseph/catkin/git/LiDAR-MOS/data/sequences/04/clean_scans
+kiss_icp_pipeline --visualize /home/joseph/catkin/git/LiDAR-MOS/data/sequences/08/clean_scans
+## Removert cleaned scans
+kiss_icp_pipeline --visualize /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/removert/03_skip1/scan_static
+kiss_icp_pipeline --visualize /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/removert/04_skip1/scan_static
+kiss_icp_pipeline --visualize /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/removert/08_skip5/scan_static
 
 # Removert
 conda activate ros_env
@@ -257,3 +276,8 @@ clean_scan_root: 'data'
 python utils/scan_cleaner.py
 ```
 This will output the cleaned scans to /data/sequences/[SEQ]/clean_scans/ 
+
+# LidarMOS
+
+# python train.py -d /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset -ac /home/joseph/Downloads/model_rangenet_residual_1/custom_train/arch_cfg.yaml -dc /home/joseph/Downloads/model_rangenet_residual_1/custom_train/data_cfg.yaml -l /home/joseph/Downloads/model_rangenet_residual_1/custom_train/results/
+python train.py -d /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset -ac /home/joseph/Downloads/model_rangenet_residual_1/custom_train/arch_cfg.yaml -l /home/joseph/catkin/git/LiDAR-MOS/training/ -dc /home/joseph/Downloads/model_rangenet_residual_1/custom_train/data_cfg.yaml

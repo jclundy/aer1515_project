@@ -161,6 +161,15 @@ pcd_combined = pcd_combined.voxel_down_sample(voxel_size=0.1)
 
 print("GT cloud num points: ", len(pcd_combined.points))
 
+
+if(args.visualize_only != True):
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    map_dir = output_folder
+    map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + ".pcd"
+    map_path = os.path.join(map_dir, map_name)
+    o3d.io.write_point_cloud(map_path, pcd_combined)
+    print("the map is saved to:", map_path, ")")
+
 vis = o3d.visualization.Visualizer()
 vis.create_window('Map', visible = True)
 vis.get_render_option().point_size = 1.0
@@ -170,11 +179,3 @@ vis.add_geometry(pcd_combined)
 
 vis.run()
 vis.destroy_window()
-
-if(args.visualize_only != True):
-    cur_dir = os.path.dirname(os.path.abspath(__file__))
-    map_dir = output_folder
-    map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + ".pcd"
-    map_path = os.path.join(map_dir, map_name)
-    o3d.io.write_point_cloud(map_path, pcd_combined)
-    print("the map is saved to:", map_path, ")")

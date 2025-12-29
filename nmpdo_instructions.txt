@@ -1,0 +1,47 @@
+# Point Pillars 0.5
+python save_bounding_boxes.py --cfg_file cfgs/kitti_models/pointpillar_copy.yaml --ckpt ~/Downloads/pointpillar_7728.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/ --output /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars
+
+#python save_bounding_boxes.py --cfg_file cfgs/kitti_models/pv_rcnn.yaml --ckpt ~/Downloads/pv_rcnn_8369.pth --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/velodyne/ --output /joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.5
+
+
+# Ground projection - point pillars
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/detections.pkl --conf 0.3
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/detections.pkl --conf 0.5
+
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/04/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/detections.pkl --conf 0.3
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/04/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/detections.pkl --conf 0.5
+
+# Ground projection - RCNN
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/detections.pkl --conf 0.3
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/03/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/detections.pkl --conf 0.5
+
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/04/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/detections.pkl --conf 0.3
+python ground_projection.py --data /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/sequences/04/ --boxes /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/detections.pkl --conf 0.5
+
+
+# Map evaluation
+## Map 03
+### Point pillars
+ python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.3/map_sequence_03_0_to_801.pcd --voxel-size=0.2
+  python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.3/map_sequence_03_0_to_801.pcd --voxel-size=0.5
+ python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.5/map_sequence_03_0_to_801.pcd --voxel-size=0.2
+  python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/pointpillars/0.5/map_sequence_03_0_to_801.pcd --voxel-size=0.5
+ 
+ ### RCNN
+ python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.3/map_sequence_03_0_to_801.pcd --voxel-size=0.2
+  python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.3/map_sequence_03_0_to_801.pcd --voxel-size=0.5
+ python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.5/map_sequence_03_0_to_801.pcd --voxel-size=0.2
+  python evaluate_map.py --ground-truth maps/map_sequence_03_0_to_801_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/03/rcnn/0.5/map_sequence_03_0_to_801.pcd --voxel-size=0.5
+ 
+ ## Map 04
+### Point pillars
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/0.3/map_sequence_04_0_to_271.pcd --voxel-size=0.2
+  python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/0.3/map_sequence_04_0_to_271.pcd --voxel-size=0.5
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/0.5/map_sequence_04_0_to_271.pcd --voxel-size=0.2
+  python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/pointpillars/0.5/map_sequence_04_0_to_271.pcd --voxel-size=0.5
+ 
+ ### RCNN
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/0.3/map_sequence_04_0_to_271.pcd --voxel-size=0.2
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/0.3/map_sequence_04_0_to_271.pcd --voxel-size=0.5
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/0.5/map_sequence_04_0_to_271.pcd --voxel-size=0.2
+ python evaluate_map.py --ground-truth maps/map_sequence_04_0_to_271_moving_vehicles.pcd --map /media/joseph/7E408025407FE1F7/Datasets/Kitti/odometry/dataset/results/NoMorePotentiallyDynamicObjects/04/rcnn/0.5/map_sequence_04_0_to_271.pcd --voxel-size=0.5

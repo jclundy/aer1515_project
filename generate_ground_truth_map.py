@@ -174,7 +174,7 @@ for node_idx in range(len(scan_files)):
         if(node_idx != scan_idx_range_to_stack[0]): # to ensure the vis init 
             continue
 
-    print("read keyframe scan idx", node_idx)
+    # print("read keyframe scan idx", node_idx)
 
     scan_pose = poses[node_idx]
 
@@ -184,14 +184,14 @@ for node_idx in range(len(scan_files)):
     ''' PART 1
     Open Point cloud and Labels into SemanticLaserScan object
     '''
-    print("scan_path=",scan_path)
+    # print("scan_path=",scan_path)
 
     scan = SemLaserScan(color_dict, project=True)
     scan.open_scan(scan_path)
 
     filename, file_extension = os.path.splitext(scan_files[node_idx])
     label_path = os.path.join(label_dir, filename + '.label')
-    print("label_path=",label_path)
+    # print("label_path=",label_path)
     scan.open_label(label_path)
     scan.colorize()
 
@@ -291,6 +291,20 @@ pcd_combined_naive = pcd_combined_naive.voxel_down_sample(voxel_size=voxel_setti
 print("GT cloud num points: ", len(pcd_combined_gt.points))
 print("Naive cloud num points: ", len(pcd_combined_naive.points))
 
+if(args.no_save == False):
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    map_dir = os.path.join(cur_dir, "maps")
+    map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + "_" + "_".join(filter_options) + ".pcd"
+    map_path = os.path.join(map_dir, map_name)
+    o3d.io.write_point_cloud(map_path, pcd_combined_gt)
+    print("the map is save to:", map_path, ")")
+
+    naive_map_name = "naive_" + map_name
+    naive_path = os.path.join(map_dir, naive_map_name)
+    o3d.io.write_point_cloud(naive_path, pcd_combined_naive)
+    print("the naive acculmulated map is saved to ", naive_path)
+
+
 if(args.visualize == True):
     print("visualizing point cloud - ground truth")
     vis = o3d.visualization.Visualizer()
@@ -310,16 +324,3 @@ if(args.visualize == True):
 
     vis.run()
     vis.destroy_window()
-
-if(args.no_save == False):
-    cur_dir = os.path.dirname(os.path.abspath(__file__))
-    map_dir = os.path.join(cur_dir, "maps")
-    map_name = "map_" + "sequence_" + sequence + "_" + str(scan_idx_range_to_stack[0]) + "_to_" + str(scan_idx_range_to_stack[1]) + "_" + "_".join(filter_options) + ".pcd"
-    map_path = os.path.join(map_dir, map_name)
-    o3d.io.write_point_cloud(map_path, pcd_combined_gt)
-    print("the map is save to:", map_path, ")")
-
-    naive_map_name = "naive_" + map_name
-    naive_path = os.path.join(map_dir, naive_map_name)
-    o3d.io.write_point_cloud(naive_path, pcd_combined_naive)
-    print("the naive acculmulated map is saved to ", naive_path)
