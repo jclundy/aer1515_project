@@ -4,3 +4,6 @@
 [submodule "openPCDet_fork"]
 	path = openPCDet_fork
 	url = https://github.com/jclundy/openPCDet_fork
+[submodule "voxelNeXt_fork"]
+	path = voxelNeXt_fork
+	url = git@github.com:jclundy/voxelNeXt_fork.git
