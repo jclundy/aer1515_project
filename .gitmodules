@@ -13,3 +13,6 @@
 [submodule "FreeDOM"]
 	path = FreeDOM
 	url = https://github.com/LC-Robotics/FreeDOM.git
+[submodule "removert_fork"]
+	path = removert_fork
+	url = git@github.com:jclundy/removert_fork.git
