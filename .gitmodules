@@ -10,3 +10,6 @@
 [submodule "semantic-kitti-api"]
 	path = semantic-kitti-api
 	url = https://github.com/PRBonn/semantic-kitti-api.git
+[submodule "FreeDOM"]
+	path = FreeDOM
+	url = https://github.com/LC-Robotics/FreeDOM.git
